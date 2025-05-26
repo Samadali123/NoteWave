@@ -1,21 +1,10 @@
-// import React from 'react'
-// import config from './config/config'
-
-// const App = () => {
-//   return (
-//     <div>Blog app with appwrite </div>
-//   )
-// }
-
-// export default App
-
-
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import './App.css'
 import authService from "./appwrite/auth"
 import {login, logout} from "./store/authSlice"
-import { Footer, Header } from './components'
+import Header from './components/Header/Header'
+import Footer from './components/Footer/Footer'
 import { Outlet } from 'react-router-dom'
 
 function App() {
