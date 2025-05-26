@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react'
 import Container from '../components/container/Container'
 import PostCard from '../components/PostCard'
-import appwriteService from "../appwrite/blog";
+import blogService from '../appwrite/blog'
 
-function AllPosts() {
+function AllPostsPage() {
     const [posts, setPosts] = useState([])
     useEffect(() => {}, [])
-    appwriteService.getPosts([]).then((posts) => {
+    blogService.getPosts([]).then((posts) => {
         if (posts) {
             setPosts(posts.documents)
         }
@@ -26,4 +26,4 @@ function AllPosts() {
   )
 }
 
-export default AllPosts
+export default AllPostsPage

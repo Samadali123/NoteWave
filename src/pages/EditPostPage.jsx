@@ -1,17 +1,17 @@
 import React, {useEffect, useState} from 'react'
 import Container from '../components/container/Container'
 import PostForm from '../components/Postform/Postform'
-import appwriteService from "../appwrite/blog";
+import blogService from '../appwrite/blog';
 import { useNavigate,  useParams } from 'react-router-dom';
 
-function EditPost() {
+function EditPostPage() {
     const [post, setPosts] = useState(null)
     const {slug} = useParams()
     const navigate = useNavigate()
 
     useEffect(() => {
         if (slug) {
-            appwriteService.getPost(slug).then((post) => {
+            blogService.getPost(slug).then((post) => {
                 if (post) {
                     setPosts(post)
                 }
@@ -29,4 +29,4 @@ function EditPost() {
   ) : null
 }
 
-export default EditPost
+export default EditPostPage

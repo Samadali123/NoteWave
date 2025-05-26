@@ -1,14 +1,14 @@
-import React from 'react'
-import appwriteService from "../appwrite/blog"
+import React, { useEffect } from 'react'
+import blogService from '../appwrite/blog'
 import {Link} from 'react-router-dom'
 
 function PostCard({$id, title, featuredImage}) {
-    
+
   return (
     <Link to={`/post/${$id}`}>
-        <div className='w-full bg-gray-100 rounded-xl p-4'>
+        <div className='w-full bg-gray-100 rounded-xl p-4 border-1'>
             <div className='w-full justify-center mb-4'>
-                <img src={appwriteService.getFilePreview(featuredImage)} alt={title}
+                <img src={blogService.getFilePreview(featuredImage)} alt={title}
                 className='rounded-xl' />
 
             </div>
