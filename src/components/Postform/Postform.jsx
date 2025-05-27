@@ -1,10 +1,12 @@
+
+
+
 // import React, { useCallback, useEffect } from "react";
 // import { useForm } from "react-hook-form";
 // import { Button, Input, RTE, Select } from "..";
 // import blogService from "../../appwrite/blog";
 // import { useNavigate } from "react-router-dom";
 // import { useSelector } from "react-redux";
-
 
 // export default function PostForm({ post }) {
 //     const { register, handleSubmit, watch, setValue, control, getValues } = useForm({
@@ -20,45 +22,38 @@
 //     const userData = useSelector((state) => state.auth.userData);
 
 //     const submit = async (data) => {
-//         if (post) {
-//             const file = data.image[0] ? await blogService.uploadFile(data.image[0]) : null;
+//         try {
+//             let file;
+//             if (post) {
+//                 file = data.image[0] ? await blogService.uploadFile(data.image[0]) : null;
+//                 if (file) await blogService.deleteFile(post.featuredImage);
 
-//             if (file) {
-//                 blogService.deleteFile(post.featuredImage);
-//             }
+//                 const dbPost = await blogService.updatePost(post.$id, {
+//                     ...data,
+//                     featuredImage: file ? file.$id : post.featuredImage,
+//                 });
 
-//             const dbPost = await blogService.updatePost(post.$id, {
-//                 ...data,
-//                 featuredImage: file ? file.$id : undefined,
-//             });
-
-//             if (dbPost) {
-//                 navigate(`/post/${dbPost.$id}`);
-//             }
-//         } else {
-//             const file = await blogService.uploadFile(data.image[0]);
-
-//             if (file) {
-//                 const fileId = file.$id;
-//                 data.featuredImage = fileId;
-//                 const dbPost = await blogService.createPost({ ...data, userId: userData.$id });
-
-//                 if (dbPost) {
-//                     navigate(`/post/${dbPost.$id}`);
+//                 if (dbPost) navigate(`/post/${dbPost.$id}`);
+//             } else {
+//                 file = await blogService.uploadFile(data.image[0]);
+//                 if (file) {
+//                     const dbPost = await blogService.createPost({
+//                         ...data,
+//                         featuredImage: file.$id,
+//                         userId: userData.$id,
+//                     });
+//                     if (dbPost) navigate(`/post/${dbPost.$id}`);
 //                 }
 //             }
+//         } catch (err) {
+//             console.error("Error submitting post:", err.message);
 //         }
 //     };
 
 //     const slugTransform = useCallback((value) => {
-//         if (value && typeof value === "string")
-//             return value
-//                 .trim()
-//                 .toLowerCase()
-//                 .replace(/[^a-zA-Z\d\s]+/g, "-")
-//                 .replace(/\s/g, "-");
-
-//         return "";
+//         return value
+//             ? value.trim().toLowerCase().replace(/[^a-zA-Z\d\s]+/g, "-").replace(/\s/g, "-")
+//             : "";
 //     }, []);
 
 //     useEffect(() => {
@@ -67,55 +62,65 @@
 //                 setValue("slug", slugTransform(value.title), { shouldValidate: true });
 //             }
 //         });
-
 //         return () => subscription.unsubscribe();
 //     }, [watch, slugTransform, setValue]);
 
 //     return (
-//         <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
-//             <div className="w-2/3 px-2">
+//         <form onSubmit={handleSubmit(submit)} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+//             {/* Left side: Title, Slug, Content */}
+//             <div className="lg:col-span-2 space-y-4 mt-17 ">
 //                 <Input
 //                     label="Title :"
-//                     placeholder="Title"
-//                     className="mb-4"
+//                     placeholder="Enter title"
 //                     {...register("title", { required: true })}
 //                 />
 //                 <Input
 //                     label="Slug :"
-//                     placeholder="Slug"
-//                     className="mb-4"
+//                     placeholder="URL Slug"
 //                     {...register("slug", { required: true })}
-//                     onInput={(e) => {
-//                         setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
-//                     }}
+//                     onInput={(e) =>
+//                         setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true })
+//                     }
 //                 />
-//                 <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
+//                 <RTE
+//                     label="Content :"
+//                     name="content"
+//                     control={control}
+//                     defaultValue={getValues("content")}
+//                 />
 //             </div>
-//             <div className="w-1/3 px-2">
+
+//             {/* Right side: Image, Status, Submit */}
+//             <div className="space-y-4 mt-17 ">
 //                 <Input
 //                     label="Featured Image :"
 //                     type="file"
-//                     className="mb-4"
 //                     accept="image/png, image/jpg, image/jpeg, image/gif"
 //                     {...register("image", { required: !post })}
 //                 />
+
 //                 {post && (
-//                     <div className="w-full mb-4">
+//                     <div className="w-full">
 //                         <img
 //                             src={blogService.getFilePreview(post.featuredImage)}
 //                             alt={post.title}
-//                             className="rounded-lg"
+//                             className="rounded-lg w-full object-cover max-h-60"
 //                         />
 //                     </div>
 //                 )}
+
 //                 <Select
-//                     options={["active", "inactive"]}
 //                     label="Status"
-//                     className="mb-4"
+//                     options={["active", "inactive"]}
 //                     {...register("status", { required: true })}
 //                 />
-//                 <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full">
-//                     {post ? "Update" : "Submit"}
+
+//                 <Button
+//                     type="submit"
+//                     bgColor={post ? "bg-green-500" : undefined}
+//                     className="w-full"
+//                 >
+//                     {post ? "Update Post" : "Create Post"}
 //                 </Button>
 //             </div>
 //         </form>
@@ -123,7 +128,9 @@
 // }
 
 
-import React, { useCallback, useEffect } from "react";
+
+
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Input, RTE, Select } from "..";
 import blogService from "../../appwrite/blog";
@@ -131,7 +138,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export default function PostForm({ post }) {
-    const { register, handleSubmit, watch, setValue, control, getValues } = useForm({
+    const { register, handleSubmit, watch, setValue, control, getValues, formState: { errors } } = useForm({
         defaultValues: {
             title: post?.title || "",
             slug: post?.$id || "",
@@ -142,33 +149,54 @@ export default function PostForm({ post }) {
 
     const navigate = useNavigate();
     const userData = useSelector((state) => state.auth.userData);
+    const [loading, setLoading] = useState(false);
 
     const submit = async (data) => {
+        setLoading(true);
         try {
-            let file;
-            if (post) {
-                file = data.image[0] ? await blogService.uploadFile(data.image[0]) : null;
-                if (file) await blogService.deleteFile(post.featuredImage);
+            let file = null;
 
-                const dbPost = await blogService.updatePost(post.$id, {
+            // For create post: image is required, so check explicitly
+            if (!post && (!data.image || data.image.length === 0)) {
+                alert("Please select an image to create a post.");
+                setLoading(false);
+                return;
+            }
+
+            // Upload new image if provided
+            if (data.image && data.image.length > 0) {
+                file = await blogService.uploadFile(data.image[0]);
+            }
+
+            if (post) {
+                if (file) {
+                    await blogService.deleteFile(post.featuredImage);
+                }
+
+                const updatedPost = await blogService.updatePost(post.$id, {
                     ...data,
                     featuredImage: file ? file.$id : post.featuredImage,
                 });
 
-                if (dbPost) navigate(`/post/${dbPost.$id}`);
+                if (updatedPost) {
+                    navigate(`/post/${updatedPost.$id}`);
+                }
             } else {
-                file = await blogService.uploadFile(data.image[0]);
-                if (file) {
-                    const dbPost = await blogService.createPost({
-                        ...data,
-                        featuredImage: file.$id,
-                        userId: userData.$id,
-                    });
-                    if (dbPost) navigate(`/post/${dbPost.$id}`);
+                const newPost = await blogService.createPost({
+                    ...data,
+                    featuredImage: file.$id,
+                    userId: userData.$id,
+                });
+
+                if (newPost) {
+                    navigate(`/post/${newPost.$id}`);
                 }
             }
         } catch (err) {
             console.error("Error submitting post:", err.message);
+            alert("Failed to submit post. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -190,20 +218,26 @@ export default function PostForm({ post }) {
     return (
         <form onSubmit={handleSubmit(submit)} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left side: Title, Slug, Content */}
-            <div className="lg:col-span-2 space-y-4">
+            <div className="lg:col-span-2 space-y-4 mt-17">
                 <Input
                     label="Title :"
                     placeholder="Enter title"
-                    {...register("title", { required: true })}
+                    {...register("title", { required: "Title is required" })}
                 />
+                {errors.title && <p className="text-red-600">{errors.title.message}</p>}
+
                 <Input
                     label="Slug :"
                     placeholder="URL Slug"
-                    {...register("slug", { required: true })}
+                    {...register("slug", { required: "Slug is required" })}
                     onInput={(e) =>
-                        setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true })
+                        setValue("slug", slugTransform(e.currentTarget.value), {
+                            shouldValidate: true,
+                        })
                     }
                 />
+                {errors.slug && <p className="text-red-600">{errors.slug.message}</p>}
+
                 <RTE
                     label="Content :"
                     name="content"
@@ -213,13 +247,14 @@ export default function PostForm({ post }) {
             </div>
 
             {/* Right side: Image, Status, Submit */}
-            <div className="space-y-4">
+            <div className="space-y-4 mt-17">
                 <Input
                     label="Featured Image :"
                     type="file"
                     accept="image/png, image/jpg, image/jpeg, image/gif"
                     {...register("image", { required: !post })}
                 />
+                {errors.image && <p className="text-red-600">Image is required</p>}
 
                 {post && (
                     <div className="w-full">
@@ -240,9 +275,34 @@ export default function PostForm({ post }) {
                 <Button
                     type="submit"
                     bgColor={post ? "bg-green-500" : undefined}
-                    className="w-full"
+                    className="w-full flex justify-center items-center gap-2"
+                    disabled={loading}
                 >
-                    {post ? "Update Post" : "Create Post"}
+                    {loading ? (
+                        <>
+                            <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24">
+                                <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                    fill="none"
+                                />
+                                <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                                />
+                            </svg>
+                            {post ? "Updating..." : "Creating..."}
+                        </>
+                    ) : post ? (
+                        "Update Post"
+                    ) : (
+                        "Create Post"
+                    )}
                 </Button>
             </div>
         </form>

@@ -38,6 +38,7 @@ import Container from "../components/container/Container";
 import PostForm from "../components/Postform/Postform";
 import blogService from "../appwrite/blog";
 import { useNavigate, useParams } from "react-router-dom";
+import Loader from "../components/Loader";
 
 function EditPostPage() {
     const [post, setPost] = useState(null);
@@ -61,13 +62,14 @@ function EditPostPage() {
     return post ? (
         <div className="py-6 px-4 md:px-8">
             <Container>
-                <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center">Edit Post</h1>
+                <h1 className="text-2xl mt-10  md:text-3xl font-bold mb-6 text-center">Edit Post</h1>
                 <PostForm post={post} />
             </Container>
         </div>
     ) : (
         <div className="w-full h-[50vh] flex items-center justify-center text-lg font-medium">
-            Loading post data...
+            {/* Loading post data... */}
+            <Loader />
         </div>
     );
 }
