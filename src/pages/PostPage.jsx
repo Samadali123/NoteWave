@@ -1,81 +1,12 @@
-// import React, { useEffect, useState } from "react";
-// import { Link, useNavigate, useParams } from "react-router-dom";
-// import blogService from "../appwrite/blog";
-// import Button from '../components/Button'
-// import Container from "../components/container/Container";
-// import parse from "html-react-parser";
-// import { useSelector } from "react-redux";
-
-// export default function PostPage() {
-//     const [post, setPost] = useState(null);
-//     const { slug } = useParams();
-//     const navigate = useNavigate();
-
-//     const userData = useSelector((state) => state.auth.userData);
-
-//     const isAuthor = post && userData ? post.userId === userData.$id : false;
-
-//     useEffect(() => {
-//         if (slug) {
-//             blogService.getPost(slug).then((post) => {
-//                 if (post) setPost(post);
-//                 else navigate("/");
-//             });
-//         } else navigate("/");
-//     }, [slug, navigate]);
-
-//     const deletePost = () => {
-//         blogService.deletePost(post.$id).then((status) => {
-//             if (status) {
-//                 blogService.deleteFile(post.featuredImage);
-//                 navigate("/");
-//             }
-//         });
-//     };
-
-//     return post ? (
-//         <div className="py-8">
-//             <Container>
-//                 <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
-//                     <img
-//                         src={blogService.getFilePreview(post.featuredImage)}
-//                         alt={post.title}
-//                         className="rounded-xl"
-//                     />
-
-//                     {isAuthor && (
-//                         <div className="absolute right-6 top-6">
-//                             <Link to={`/edit-post/${post.$id}`}>
-//                                 <Button bgColor="bg-green-500" className="mr-3">
-//                                     Edit
-//                                 </Button>
-//                             </Link>
-//                             <Button bgColor="bg-red-500" onClick={deletePost}>
-//                                 Delete
-//                             </Button>
-//                         </div>
-//                     )}
-//                 </div>
-//                 <div className="w-full mb-6">
-//                     <h1 className="text-2xl font-bold">{post.title}</h1>
-//                 </div>
-//                 <div className="browser-css">
-//                     {parse(post.content)}
-//                     </div>
-//             </Container>
-//         </div>
-//     ) : null;
-// }
-
-
 
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import blogService from "../appwrite/blog";
-import Button from "../components/Button";
+import Button from '../components/Button';
 import Container from "../components/container/Container";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
 export default function PostPage() {
     const [post, setPost] = useState(null);
@@ -85,13 +16,16 @@ export default function PostPage() {
 
     const isAuthor = post && userData ? post.userId === userData.$id : false;
 
+
     useEffect(() => {
         if (slug) {
-            blogService.getPost(slug).then((post) => {
-                if (post) setPost(post);
+            blogService.getPost(slug).then((fetchedPost) => {
+                if (fetchedPost) setPost(fetchedPost);
                 else navigate("/");
             });
-        } else navigate("/");
+        } else {
+            navigate("/");
+        }
     }, [slug, navigate]);
 
     const deletePost = () => {
@@ -106,31 +40,47 @@ export default function PostPage() {
     return post ? (
         <div className="py-6 px-4 md:px-8">
             <Container>
-                <div className="w-full flex flex-col items-center mb-6 gap-4">
-                    <div className="w-full max-w-4xl relative">
+                <div className="w-full max-w-5xl mx-auto flex flex-col gap-6">
+                    <div className="relative w-full rounded-xl overflow-hidden shadow-md">
                         <img
                             src={blogService.getFilePreview(post.featuredImage)}
                             alt={post.title}
-                            className="w-full max-h-[400px] object-cover rounded-xl shadow-md"
+                            className="w-full h-[250px] sm:h-[350px] md:h-[450px] object-cover"
                         />
 
+
+
+
                         {isAuthor && (
-                            <div className="absolute top-4 right-4 flex flex-wrap gap-2 z-10">
+                            <div className="absolute top-4 right-4 z-50 flex flex-col sm:flex-row items-center gap-2 sm:gap-3 px-3 py-2 backdrop-blur-sm border border-gray-300 rounded-xl shadow-lg transition-all duration-300">
+
+                                {/* Edit Button */}
                                 <Link to={`/edit-post/${post.$id}`}>
-                                    <Button bgColor="bg-green-500">Edit</Button>
+                                    <button className="flex items-center gap-1 px-2 py-1 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition">
+                                        <FiEdit2 className="text-gray-600" size={14} />
+                                        Edit
+                                    </button>
                                 </Link>
-                                <Button bgColor="bg-red-500" onClick={deletePost}>
+
+                                {/* Delete Button */}
+                                <button
+                                    onClick={deletePost}
+                                    className="flex items-center gap-1 px-2 py-1 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                                >
+                                    <FiTrash2 className="text-gray-600" size={14} />
                                     Delete
-                                </Button>
+                                </button>
                             </div>
                         )}
+
+
                     </div>
 
-                    <h1 className="text-3xl md:text-4xl font-bold text-center break-words px-2">
+                    <h1 className="text-2xl md:text-4xl font-bold text-center break-words">
                         {post.title}
                     </h1>
 
-                    <div className="w-full max-w-4xl prose prose-sm sm:prose lg:prose-lg dark:prose-invert browser-css">
+                    <div className="prose prose-sm sm:prose md:prose-lg lg:prose-xl max-w-full dark:prose-invert browser-css">
                         {parse(post.content)}
                     </div>
                 </div>
@@ -138,3 +88,5 @@ export default function PostPage() {
         </div>
     ) : null;
 }
+
+
