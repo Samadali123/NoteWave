@@ -24,7 +24,7 @@ function HomePage() {
     return (
       <div className="py-8 mt-4 text-center w-screen">
         <Container>
-          <Loader /> {/* show loader while loading */}
+          <Loader /> 
         </Container>
       </div>
     );
