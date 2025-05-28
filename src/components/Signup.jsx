@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import authService from '../appwrite/auth.js';
 import { Link, useNavigate } from 'react-router-dom';
@@ -17,11 +16,12 @@ function Signup() {
 
   const create = async (data) => {
     setError('');
-    setLoading(true); // 👈 start loader
+    setLoading(true); 
     try {
       const user = await authService.createAccount(data);
       if (user) {
         const userData = await authService.getCurrentUser();
+        // console.log(userData);
         if (userData) {
           dispatch(login(userData));
           navigate('/');
@@ -53,6 +53,7 @@ function Signup() {
           </Link>
         </p>
         {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
+        
 
         <form onSubmit={handleSubmit(create)}>
           <div className="space-y-5">

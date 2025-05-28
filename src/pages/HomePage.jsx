@@ -5,6 +5,7 @@ import Container from '../components/container/Container';
 import PostCard from '../components/PostCard';
 import Loader from '../components/Loader';
 
+
 function HomePage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true); // loading state
@@ -34,8 +35,8 @@ function HomePage() {
     return (
       <div className="py-8 mt-4 text-center w-screen">
         <Container>
-          <h1 className="text-2xl font-bold hover:text-gray-500">
-            Please Login to Continue
+          <h1 className="text-2xl mt-50  font-bold hover:text-gray-500">
+            Not Have Any Post Yet.
           </h1>
         </Container>
       </div>

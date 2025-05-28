@@ -18,7 +18,7 @@ function Header() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur-md shadow-md">
+    <header className="fixed  z-[9999] top-0 left-0 w-full z-50 bg-white/90 backdrop-blur-md shadow-md">
       <Container>
         <nav className="flex pl-16  items-center justify-between py-3 relative">
           {/* Logo */}
