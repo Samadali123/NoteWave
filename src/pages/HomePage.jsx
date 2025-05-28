@@ -36,7 +36,7 @@ function HomePage() {
       <div className="py-8 mt-4 text-center w-screen">
         <Container>
           <h1 className="text-2xl mt-50  font-bold hover:text-gray-500">
-            Not Have Any Post Yet.
+            PLease Login to Continue
           </h1>
         </Container>
       </div>
